@@ -43,11 +43,9 @@ public class Network {
     *  Otherwise, creates a new user with the given name, adds the user to this network, and returns true. */
     public boolean addUser(String name) {
         if(this.getUser(name) != null) {
-            System.out.println("This user already exist in the network");
             return false;
         }
-        if(this.userCount == 1000) {
-            System.out.println("network is full");
+        if (this.userCount >= this.users.length) { 
             return false;
         }
         this.users[userCount] = new User(name);
@@ -61,6 +59,9 @@ public class Network {
     public boolean addFollowee(String name1, String name2) {
         if(getUser(name1) == null || getUser(name2) == null) {
             return false;
+        }
+        if(getUser(name1).follows(name2)) {
+            return true;
         }
         getUser(name1).addFollowee(name2);
         return true;
@@ -83,6 +84,9 @@ public class Network {
     /** Computes and returns the name of the most popular user in this network: 
      *  The user who appears the most in the follow lists of all the users. */
     public String mostPopularUser() {
+        if (userCount == 0) {
+            return null; 
+        }
         String mostPopName = users[0].getName();
         int mostPopNum = 0;
         int curNum = 0;
@@ -115,9 +119,15 @@ public class Network {
 
     // Returns a textual description of all the users in this network, and who they follow.
     public String toString() {
-        for(int i = 0; i < this.userCount; i++) {
-            System.out.println(this.users[i]);
+        if (userCount == 0) {
+            return "Network:";
         }
-       return null;
+        String result = "Network:\n";
+        for (int i = 0; i < this.userCount; i++) {
+            if (this.users[i] != null) {
+                result += this.users[i].toString() + "\n";
+            }
+        }
+        return result;
     }
 }
